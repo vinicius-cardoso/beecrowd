@@ -3,66 +3,78 @@
 
 using namespace std;
 
+typedef struct Node {
+    Node *prox;
+} Node;
+
 class Pilha {
    private:
-    int *pilha;
-    int max_tam;
-    int topo;
+    Node *topo;
+    int tamanho = 0;
 
    public:
     Pilha();
     ~Pilha();
-    void Empilhar(char elem);
+    void Empilhar();
     void Desempilhar();
     bool IsVazia();
     int GetTamanho();
 };
 
 Pilha::Pilha() {
-    pilha = new int[100000];
-    max_tam = 100000;
-    topo = -1;
+    topo = NULL;
 }
 
 Pilha::~Pilha() {
-    delete[] pilha;
+    while (topo != NULL) {
+        Node *aux = topo;
+        topo = topo->prox;
+
+        delete aux;
+    }
 }
 
-void Pilha::Empilhar(char elem) {
-    if (topo == max_tam)
-        throw "Pilha cheia!";
-    else
-        pilha[++topo] = elem;
+void Pilha::Empilhar() {
+    Node *aux;
+
+    aux = new Node;
+    aux->prox = topo;
+    topo = aux;
+
+    tamanho++;
 }
 
 void Pilha::Desempilhar() {
-    if (topo == -1)
-        throw "Pilha vazia!";
-    else
-        topo--;
+    if (topo != NULL) {
+        Node *aux = topo;
+        topo = topo->prox;
+
+        delete aux;
+
+        tamanho--;
+    }
 }
 
 bool Pilha::IsVazia() {
-    if (topo == -1)
+    if (topo == NULL)
         return true;
     else
         return false;
 }
 
 int Pilha::GetTamanho() {
-    return topo + 1;
+    return tamanho;
 }
 
 int main() {
     Pilha p;
 
     string entrada;
-
     cin >> entrada;
 
     for (int i = 0; i < entrada.size(); i++) {
         if (entrada[i] == '(') {
-            p.Empilhar(entrada[i]);
+            p.Empilhar();
         } else if (entrada[i] == ')') {
             if (p.IsVazia()) {
                 continue;
